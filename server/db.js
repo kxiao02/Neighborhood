@@ -11,14 +11,18 @@ const pool = new Pool({
 });
 
 const createUser = async (email, password) => {
-  return pool
-    .query(
-      "INSERT INTO Users (email, password) VALUES ($1, $2) RETURNING uid",
-      [email, password]
-    )
-    .then((res) => {
-      return res.rows[0].uid;
-    });
+  try {
+    await pool.query('BEGIN');
+    const res = await pool.query(
+        "INSERT INTO Users (email, password) VALUES ($1, $2) RETURNING uid",
+        [email, password]
+    );
+    await pool.query('COMMIT');
+    return res.rows[0].uid;
+  } catch (error) {
+    await pool.query('ROLLBACK');
+    throw error; // Rethrow after rollback to handle error outside
+  }
 };
 
 const queryUsers = async () => {
@@ -46,15 +50,19 @@ const getAddress = async (aid) => {
   return res.rows[0];
 };
 
-const createProfile = async (
-  uid,
-  { user_name, gender, first_name, last_name, aid, apt, description }
-) => {
-  const res = await pool.query(
-    "INSERT INTO Profile (uid, user_name, gender, first_name, last_name, aid, apt, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
-    [uid, user_name, gender, first_name, last_name, aid, apt, description]
-  );
-  return res.rowCount > 0; // return true if at least one row was inserted
+const createProfile = async (uid, { user_name, gender, first_name, last_name, aid, apt, description }) => {
+  try {
+    await pool.query('BEGIN');
+    const res = await pool.query(
+        "INSERT INTO Profile (uid, user_name, gender, first_name, last_name, aid, apt, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+        [uid, user_name, gender, first_name, last_name, aid, apt, description]
+    );
+    await pool.query('COMMIT');
+    return res.rowCount > 0;
+  } catch (error) {
+    await pool.query('ROLLBACK');
+    throw error; // Rethrow after rollback to handle error outside
+  }
 };
 
 const createAddress = async ({

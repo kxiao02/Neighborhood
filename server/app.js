@@ -60,29 +60,30 @@ app.use(
 app.use(express.json()); // for parsing application/json
 
 app.post(
-  "/login",
-  asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    const user = await getUserByEmail(email);
+    "/login",
+    asyncHandler(async (req, res) => {
+        const { email, password } = req.body;
+        const user = await getUserByEmail(email);
 
-    if (!user) {
-      res.status(401).send("Invalid credentials");
-      return;
-    }
+        if (!user) {
+            res.status(401).send("Invalid credentials");
+            return;
+        }
 
-    const hashedPassword = user.password;
-    const hashedPasswordStr = hashedPassword.toString("utf8");
+        const hashedPassword = user.password;
+        const isMatch = await bcrypt.compare(password, hashedPassword);
 
-    if (password == hashedPasswordStr) {
-      const token = jwt.sign({ id: user.uid, email }, secretKey, {
-        expiresIn: "30d",
-      });
-      res.json({ token, user: { email: user.email } });
-    } else {
-      res.status(401).send("Invalid credentials");
-    }
-  })
+        if (isMatch) {
+            const token = jwt.sign({ id: user.uid, email }, secretKey, {
+                expiresIn: "30d",
+            });
+            res.json({ token, user: { email: user.email } });
+        } else {
+            res.status(401).send("Invalid credentials");
+        }
+    })
 );
+
 
 app.get(
   "/me",

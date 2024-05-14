@@ -1,0 +1,10 @@
+.content {
+  padding: 0 48px; /* padding for desktop */
+}
+
+/* change padding for screens smaller than 768px */
+@media (max-width: 767px) {
+  .content {
+    padding: 0 20px; /* padding for mobile */
+  }
+}

@@ -3,7 +3,7 @@ import { Modal, Form, Input, message } from "antd";
 import { useAuth } from "../hooks/useAuth";
 import { useAppContext } from "./AppProvider";
 
-export const ThreadDialog = () => {
+export const LoginDialog = () => {
   const { loginVisible, setLoginVisible } = useAppContext();
   const { login } = useAuth();
   const [username, setUsername] = useState("kminchelle");

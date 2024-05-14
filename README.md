@@ -96,7 +96,3 @@ Execute `node app.js` to start the server. The server will be available at `http
 ## Future Enhancements
 - **OAuth Integration**: Implement OAuth for third-party authentication.
 - **Rate Limiting**: Add rate limiting to prevent abuse of the API.
-
----
-
-This template outlines the critical components of your project. You can expand each section as needed, especially the user guide and future enhancements, based on specific functionalities of your application.
